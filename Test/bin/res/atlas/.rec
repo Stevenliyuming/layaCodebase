@@ -38,7 +38,10 @@ P 0587871F vscroll$up.png
 P 5FD17798 vscroll.png
 P DDDDFB9E vslider$bar.png
 P 01BAE7F5 vslider.png
-D res
+D img
 P 64C879BA A.png
 P 464FC94A A点击.png
 R BB25464B bg.png
+D skeleton
+D sound
+R 3D1E0421 click.mp3

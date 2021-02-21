@@ -1,4 +1,6 @@
 import GameConfig from "./GameConfig";
+import { MainScene } from "./MainScene";
+import { SceneManager } from "./view/SceneManager";
 class Main {
 	constructor() {
 		//根据IDE设置初始化引擎		
@@ -6,14 +8,10 @@ class Main {
 		else Laya.init(GameConfig.width, GameConfig.height, Laya["WebGL"]);
 		Laya["Physics"] && Laya["Physics"].enable();
 		Laya["DebugPanel"] && Laya["DebugPanel"].enable();
-		// Laya.stage.scaleMode = GameConfig.scaleMode;
-		// Laya.stage.screenMode = GameConfig.screenMode;
-		// Laya.stage.alignV = GameConfig.alignV;
-		// Laya.stage.alignH = GameConfig.alignH;
-		Laya.stage.alignV = "middle";
-		Laya.stage.alignH = "center"; 
-		Laya.stage.scaleMode = "full";
+		Laya.stage.scaleMode = GameConfig.scaleMode;
 		Laya.stage.screenMode = GameConfig.screenMode;
+		Laya.stage.alignV = GameConfig.alignV;
+		Laya.stage.alignH = GameConfig.alignH; 
 		Laya.stage.bgColor = "#00BFFF";
 		//兼容微信不支持加载scene后缀场景
 		Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
@@ -45,25 +43,27 @@ class Main {
 	private gameScale:number = 1;
 	private showScene() {
 		let s = this;
-		s.sceneLayer = new Laya.Sprite;
-		s.sceneLayer.width = GameConfig.width;
-		s.sceneLayer.height = GameConfig.height;
-		Laya.stage.addChild(s.sceneLayer);
-		Laya.stage.on(Laya.Event.RESIZE, s, s.stageResize);
-		s.stageResize();
+		// s.sceneLayer = new Laya.Sprite;
+		// s.sceneLayer.width = GameConfig.width;
+		// s.sceneLayer.height = GameConfig.height;
+		// Laya.stage.addChild(s.sceneLayer);
+		// Laya.stage.on(Laya.Event.RESIZE, s, s.stageResize);
+		// s.stageResize();
 
-		Laya.loader.load(["../laya/assets/res/bg.png", "../laya/assets/res/A.png", "../laya/assets/res/A点击.png"], Laya.Handler.create(this, ()=>{
-			let bg = new Laya.Sprite;
-			bg.texture = Laya.loader.getRes("../laya/assets/res/bg.png");
-			s.sceneLayer.addChild(bg);
+		Laya.loader.load(["../laya/assets/img/bg.png", "../laya/assets/img/A.png", "../laya/assets/img/A点击.png"], Laya.Handler.create(this, ()=>{
+			// let bg = new Laya.Sprite;
+			// bg.texture = Laya.loader.getRes("../laya/assets/img/bg.png");
+			// s.sceneLayer.addChild(bg);
 
-			var button:Laya.Button = new Laya.Button();//创建一个 Button 类的实例对象 button ,并传入它的皮肤。
-			button.skin = "../laya/assets/res/A.png";
-			button.stateNum = 1;
-			button.x = 100;//设置 button 对象的属性 x 的值，用于控制 button 对象的显示位置。
-			button.y = 100;//设置 button 对象的属性 y 的值，用于控制 button 对象的显示位置。
-			button.clickHandler = Laya.Handler.create(this, this.onClickButton,[button], false);//设置 button 的点击事件处理器。
-			s.sceneLayer.addChild(button);//将此 button 对象添加到显示列表。
+			// var button:Laya.Button = new Laya.Button();//创建一个 Button 类的实例对象 button ,并传入它的皮肤。
+			// button.skin = "../laya/assets/img/A.png";
+			// button.stateNum = 1;
+			// button.x = 100;//设置 button 对象的属性 x 的值，用于控制 button 对象的显示位置。
+			// button.y = 100;//设置 button 对象的属性 y 的值，用于控制 button 对象的显示位置。
+			// button.clickHandler = Laya.Handler.create(this, this.onClickButton, [button], false);//设置 button 的点击事件处理器。
+			// s.sceneLayer.addChild(button);//将此 button 对象添加到显示列表。
+
+			SceneManager.instance.showScene(new MainScene);
 		}));
 	}
 

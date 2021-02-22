@@ -1,4 +1,11 @@
 export default class Global {
+
+    static FRAME_RATE: number = 60;
+
+    static STATS_BTN: boolean = false;
+
+    static getDefinitionByNameCache = {};
+
     static getQualifiedClassName(value) {
         var type = typeof value;
         if (!value || (type != "object" && !value.prototype)) {
@@ -17,5 +24,34 @@ export default class Global {
             writable: true
         });
         return className;
+    }
+
+        /**
+     * 返回 name 参数指定的类的类对象引用。
+     * @param name 类的名称。
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample egret/utils/getDefinitionByName.ts
+     * @language zh_CN
+     */
+    static getDefinitionByName(name) {
+        if (!name)
+            return null;
+        var definition = Global.getDefinitionByNameCache[name];
+        if (definition) {
+            return definition;
+        }
+        var paths = name.split(".");
+        var length = paths.length;
+        definition = window;
+        for (var i = 0; i < length; i++) {
+            var path = paths[i];
+            definition = definition[path];
+            if (!definition) {
+                return null;
+            }
+        }
+        Global.getDefinitionByNameCache[name] = definition;
+        return definition;
     }
 }

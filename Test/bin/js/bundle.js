@@ -42,9 +42,32 @@
             });
             return className;
         }
+        static getDefinitionByName(name) {
+            if (!name)
+                return null;
+            var definition = Global.getDefinitionByNameCache[name];
+            if (definition) {
+                return definition;
+            }
+            var paths = name.split(".");
+            var length = paths.length;
+            definition = window;
+            for (var i = 0; i < length; i++) {
+                var path = paths[i];
+                definition = definition[path];
+                if (!definition) {
+                    return null;
+                }
+            }
+            Global.getDefinitionByNameCache[name] = definition;
+            return definition;
+        }
     }
+    Global.FRAME_RATE = 60;
+    Global.STATS_BTN = false;
+    Global.getDefinitionByNameCache = {};
 
-    class BaseScene extends Laya.Sprite {
+    class BaseScene extends Laya.UIComponent {
         constructor() {
             super();
             this.isClear = false;
@@ -380,7 +403,7 @@
                 Laya["PhysicsDebugDraw"].enable();
             if (GameConfig.stat)
                 Laya.Stat.show();
-            Laya.stage.frameRate = "60";
+            Laya.stage.frameRate = Global.FRAME_RATE.toString();
             Laya.ResourceVersion.enable("version.json", Laya.Handler.create(this, this.onVersionLoaded), Laya.ResourceVersion.FILENAME_VERSION);
             this.showScene();
         }

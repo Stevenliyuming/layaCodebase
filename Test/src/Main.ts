@@ -1,5 +1,6 @@
 import GameConfig from "./GameConfig";
 import { MainScene } from "./MainScene";
+import Global from "./util/Global";
 import { SceneManager } from "./view/SceneManager";
 class Main {
 	constructor() {
@@ -11,7 +12,7 @@ class Main {
 		Laya.stage.scaleMode = GameConfig.scaleMode;
 		Laya.stage.screenMode = GameConfig.screenMode;
 		Laya.stage.alignV = GameConfig.alignV;
-		Laya.stage.alignH = GameConfig.alignH; 
+		Laya.stage.alignH = GameConfig.alignH;
 		Laya.stage.bgColor = "#00BFFF";
 		//兼容微信不支持加载scene后缀场景
 		Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
@@ -21,11 +22,11 @@ class Main {
 		if (GameConfig.physicsDebug && Laya["PhysicsDebugDraw"]) Laya["PhysicsDebugDraw"].enable();
 		if (GameConfig.stat) Laya.Stat.show();
 		//Laya.alertGlobalError(true);
-		Laya.stage.frameRate = "60";
+		Laya.stage.frameRate = Global.FRAME_RATE.toString();
 
 		//激活资源版本控制，version.json由IDE发布功能自动生成，如果没有也不影响后续流程
 		Laya.ResourceVersion.enable("version.json", Laya.Handler.create(this, this.onVersionLoaded), Laya.ResourceVersion.FILENAME_VERSION);
-		
+
 		this.showScene();
 	}
 
@@ -39,8 +40,8 @@ class Main {
 		GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);
 	}
 
-	private sceneLayer:Laya.Sprite;
-	private gameScale:number = 1;
+	private sceneLayer: Laya.Sprite;
+	private gameScale: number = 1;
 	private showScene() {
 		let s = this;
 		// s.sceneLayer = new Laya.Sprite;
@@ -50,7 +51,7 @@ class Main {
 		// Laya.stage.on(Laya.Event.RESIZE, s, s.stageResize);
 		// s.stageResize();
 
-		Laya.loader.load(["../laya/assets/img/bg.png", "../laya/assets/img/A.png", "../laya/assets/img/A点击.png"], Laya.Handler.create(this, ()=>{
+		Laya.loader.load(["../laya/assets/img/bg.png", "../laya/assets/img/A.png", "../laya/assets/img/A点击.png"], Laya.Handler.create(this, () => {
 			// let bg = new Laya.Sprite;
 			// bg.texture = Laya.loader.getRes("../laya/assets/img/bg.png");
 			// s.sceneLayer.addChild(bg);
@@ -67,7 +68,7 @@ class Main {
 		}));
 	}
 
-	private onClickButton(e:any) {
+	private onClickButton(e: any) {
 		console.log(e);
 	}
 
@@ -77,7 +78,7 @@ class Main {
 		s.sceneLayer.height = GameConfig.height;
 		let scaleX = Laya.stage.width / GameConfig.width;
 		let scaleY = Laya.stage.height / GameConfig.height;
-		s.gameScale = scaleX < scaleY?scaleX:scaleY;
+		s.gameScale = scaleX < scaleY ? scaleX : scaleY;
 		s.sceneLayer.scaleX = s.sceneLayer.scaleY = s.gameScale;
 		s.sceneLayer.x = (Laya.stage.width - s.sceneLayer.width * s.gameScale) / 2;
 		s.sceneLayer.y = (Laya.stage.height - s.sceneLayer.height * s.gameScale) / 2;

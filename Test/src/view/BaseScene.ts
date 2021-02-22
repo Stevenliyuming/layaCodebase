@@ -1,5 +1,5 @@
 import Global from "../util/Global";
-export default class BaseScene extends Laya.Sprite {
+export default class BaseScene extends Laya.UIComponent {
 	protected isClear: boolean = false;
 	protected modulePath: string;
 	protected skeletonPath: string;

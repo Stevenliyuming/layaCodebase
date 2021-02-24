@@ -21,27 +21,33 @@ export default class BaseUIComponent extends Laya.Sprite {
 
 	private elements: Laya.Sprite[] = [];
 
+	public static $hashCode:number = 0;
+	public hashCode:number = 0;
+
 	public constructor() {
 		super();
 		let s = this;
+		s.hashCode = ++BaseUIComponent.$hashCode;
 		s._drawDelay = false;
-		s.onAddToStage(null);
-		//s.on(Laya.Event.ADDED, s.onAddToStage, s);
-		//console.log("this._drawDelay=" + this._drawDelay)
+		s._isAddedToStage = false;
 	}
 
 	/**
 	 * 第一次加入场景的时候会运行该方法
 	 */
-	public onAddToStage(event: Laya.Event): void {
+	public onEnable(): void {
+		super.onEnable();
 		let s = this;
 		s._isAddedToStage = true;
-		//s.removeEventListener(egret.Event.ADDED_TO_STAGE, s.onAddToStage, s);
 		s.createChildren();
 		s.initData();
 		s.onInvalidatePosition();
 		s.invalidate();
 		//console.log("222222this._drawDelay=" + this._drawDelay)
+	}
+
+	public onDisable() {
+		super.onDisable();
 	}
 
 	/**
@@ -56,8 +62,6 @@ export default class BaseUIComponent extends Laya.Sprite {
 	 * 子类覆写该方法,添加UI逻辑
 	 */
 	public createChildren(): void {
-		let s = this;
-		//s.mouseEnabled = false;//默认不接受事件
 		//this.setSize(Style.BASEGROUP_WIDTH, Style.BASEGROUP_HEIGHT);
 	}
 
@@ -208,7 +212,8 @@ export default class BaseUIComponent extends Laya.Sprite {
 		if (!s._hasInvalidatePosition) {
 			//console.log("onInvalidatePosition 111 name=" + this.name);
 			s._hasInvalidatePosition = true;
-			s.on(Laya.Event.FRAME, s, s.resetPosition);
+			Laya.timer.frameLoop(1, s, s.resetPosition);
+			//s.on(Laya.Event.FRAME, s, s.resetPosition);
 			let child: any;
 			for (var i: number = 0; i < s.numChildren; i++) {
 				child = s.getChildAt(i);
@@ -283,17 +288,6 @@ export default class BaseUIComponent extends Laya.Sprite {
 				//console.log("this._verticalEnabled=" + this._verticalEnabled + ", y=" + this._y);
 			}
 
-			//改变子级布局
-			// if (widthChanged || heightChanged) {
-			// 	let child: any;
-			// 	for (var i: number = 0; i < s.numChildren; i++) {
-			// 		child = s.getChildAt(i);
-			// 		if ((widthChanged || heightChanged) && child instanceof BaseGroup) {
-			// 			child.onInvalidatePosition();
-			// 		}
-			// 	}
-			// }
-
 			//添加具有约束布局的元素
 			if (s.elements.length > 0) {
 				for (let i = 0; i < s.elements.length; ++i) {
@@ -308,19 +302,25 @@ export default class BaseUIComponent extends Laya.Sprite {
 				if ((widthChanged || heightChanged) && child instanceof BaseUIComponent) {
 					child.onInvalidatePosition();
 				} else {
-					if (Global.getQualifiedClassName(child) === "laya.ui.UIComponent") {
+					// var proto = Object.getPrototypeOf(child);
+					// var targetProto = Object.getPrototypeOf(Laya.UIComponent);
+					if(child instanceof Laya.UIComponent) {
 						BaseUIComponent.resetChildPosition(child);
 					}
+					// let className = Global.getQualifiedClassName(child);
+					// if (className === "laya.ui.UIComponent") {
+					// 	BaseUIComponent.resetChildPosition(child);
+					// }
 				}
 			}
 		}
-		s.off(Laya.Event.FRAME, s, s.resetPosition);
+		Laya.timer.clear(s, s.resetPosition);
 		s._hasInvalidatePosition = false;
 	}
 
 	private static resetChildPosition(child: Laya.Sprite) {
 		var pr: Laya.Sprite = <Laya.Sprite>child.parent;
-		if (pr != null && child['top'] !== undefined && child['bottom'] !== undefined && child['left'] !== undefined && child['right'] !== undefined && child['horizontalCenter'] !== undefined && child['verticalCenter'] !== undefined) {
+		if (pr != null && child['top'] !== undefined && child['bottom'] !== undefined && child['left'] !== undefined && child['right'] !== undefined && child['centerX'] !== undefined && child['centerY'] !== undefined) {
 			var parentWidth: number = pr.width;
 			var parentHeight: number = pr.height;
 			var thisWidth: number = child.width;
@@ -368,12 +368,12 @@ export default class BaseUIComponent extends Laya.Sprite {
 				}
 			}
 
-			if (!isNaN(child['horizontalCenter']) && !widthChanged) {//宽度有改变的情况下(左右拉伸),水平居中不再生效
-				child.x = (parentWidth - thisWidth) / 2 + child['horizontalCenter'];
+			if (!isNaN(child['centerX']) && !widthChanged) {//宽度有改变的情况下(左右拉伸),水平居中不再生效
+				child.x = (parentWidth - thisWidth) / 2 + child['centerX'];
 				//console.log("this._horizontalEnabled=" + this._horizontalEnabled + ", x=" + this._x);
 			}
-			if (!isNaN(child['verticalCenter']) && !heightChanged) {//高度有改变的情况下(上下拉伸),竖直居中不再生效
-				child.y = (parentHeight - thisHeight) / 2 + child['verticalCenter'];
+			if (!isNaN(child['centerY']) && !heightChanged) {//高度有改变的情况下(上下拉伸),竖直居中不再生效
+				child.y = (parentHeight - thisHeight) / 2 + child['centerY'];
 				//console.log("this._verticalEnabled=" + this._verticalEnabled + ", y=" + this._y);
 			}
 
@@ -394,12 +394,12 @@ export default class BaseUIComponent extends Laya.Sprite {
 	}
 
 	/**
-	 * 添加实现了eui.UIComponent类约束布局的元素,例如：eui.Image
+	 * 添加实现了laya.ui.UIComponent类约束布局的元素,例如：Laya.Image
 	 */
 	public addElement(child: Laya.Sprite) {
 		let s = this;
 		if (s.elements.indexOf(child) >= 0) return;
-		if (Global.getQualifiedClassName(child) === "laya.ui.UIComponent") {
+		if (child instanceof Laya.UIComponent) {
 			s.elements.push(child);
 			s.onInvalidatePosition();
 		} else {
@@ -504,7 +504,8 @@ export default class BaseUIComponent extends Laya.Sprite {
 		let s = this;
 		if (!s._hasInvalidate && !s._drawDelay) {
 			//console.log("add invalidate draw")
-			s.on(Laya.Event.FRAME, s, s.onInvalidate);
+			//s.on(Laya.Event.FRAME, s, s.onInvalidate);
+			Laya.timer.frameLoop(2, s, s.onInvalidate);
 			s._hasInvalidate = true;
 		}
 	}
@@ -515,7 +516,8 @@ export default class BaseUIComponent extends Laya.Sprite {
 	public onInvalidate(event: Laya.Event): void {
 		let s = this;
 		s.draw();
-		s.off(Laya.Event.FRAME, s, s.onInvalidate);
+		//s.off(Laya.Event.FRAME, s, s.onInvalidate);
+		Laya.timer.clear(s, s.onInvalidate);
 		s._hasInvalidate = false;
 	}
 

@@ -23,7 +23,7 @@ export class Button extends BaseUIComponent {
     private _text: string = "";
 
     private _texture: Laya.Texture = null;//外设的纹理
-    private _imgDisplay: Laya.Image = null;//显示按钮up用的image
+    private _imgDisplay: Laya.Image = null;//显示按钮用的image
 
     public _imgLabel: Laya.Image = null;//显示文字图片的image
     public _imgIcon: Laya.Image = null;//显示图标用的image
@@ -72,7 +72,7 @@ export class Button extends BaseUIComponent {
     private _fillMode: string = "scale";//scale, repeat.
 
     //声音播放
-    private _soundName: string = "sound_button";
+    private _soundName: string;
 
     //像素级检测
     private _testPixelEnable: boolean = false;
@@ -82,6 +82,8 @@ export class Button extends BaseUIComponent {
 
     public constructor() {
         super();
+        // this.on(Laya.Event.COMPONENT_ADDED, this, this.createChildren);
+        // this.createChildren();
     }
 
     public createChildren(): void {
@@ -107,10 +109,8 @@ export class Button extends BaseUIComponent {
         this.addChild(this._label);
 
         this.on(Laya.Event.MOUSE_DOWN, this, this.onTouchEvent);
-        //this.addEventListener(egret.TouchEvent.TOUCH_MOVE, this.onTouchEvent, this);
         this.on(Laya.Event.MOUSE_UP, this, this.onTouchEvent);
         this.on(Laya.Event.MOUSE_OUT, this, this.onTouchRleaseOutside);
-        // this.on(Laya.Event.TOUCH_CANCEL, this, this.onTouchRleaseOutside);
     }
 
     public onTouchEvent(event: Laya.Event): void {
@@ -264,105 +264,110 @@ export class Button extends BaseUIComponent {
     public draw(): void {
         //super.draw();
         //if (this._data)console.log("@@Button draw _text=" + this._text + ", selected=" + this.selected + ", data=" + this._data.id);
+        let s = this;
         //初始化显示对象和数据
-        if (!this._initDisplayData) {
-            if (!this._texture) {
+        if (!s._initDisplayData) {
+            if (!s._texture) {
                 if (Button.DEFAULT_TEXTURE == null) {
-                    this.initDefaultTexture();
+                    s.initDefaultTexture();
                 }
-                this._texture = Button.DEFAULT_TEXTURE;
+                s._texture = Button.DEFAULT_TEXTURE;
             }
-            this.splitTextureSource();//切割成态数对应的材质
+            s.splitTextureSource();//切割成态数对应的材质
         }
 
-        if (this._imgDisplay == null) return;
+        if (s._imgDisplay == null) {
+            return;
+            // if(s.numChildren < 2) return;
+            // s._imgDisplay = <Laya.Image>s.getChildAt(0);
+        }
         //只设置了一个状态的时候，第二态用第一态的资源
-        if (this.statesLength == 1 && this._currentState == Button.STATE_DOWN) {
-            this._imgDisplay.texture = this._textureDict[Button.STATE_UP];
+        if (s.statesLength == 1 && s._currentState == Button.STATE_DOWN) {
+            s._imgDisplay.texture = s._textureDict[Button.STATE_UP];
         } else {
-            this._imgDisplay.texture = this._textureDict[this._currentState];
+            s._imgDisplay.texture = s._textureDict[s._currentState];
         }
         //按钮图片九宫拉伸设置
-        if (this._scale9GridRect != null) {
-            this._imgDisplay.sizeGrid = this._scale9GridRect.toString();
+        if (s._scale9GridRect != null) {
+            s._imgDisplay.sizeGrid = s._scale9GridRect.toString();
         } else {
-            this._imgDisplay.sizeGrid = null;
+            s._imgDisplay.sizeGrid = null;
         }
         //this._imgDisplay.fillMode = this._fillMode;
-        this._imgDisplay.width = this.width;
-        this._imgDisplay.height = this.height;
-        this._imgDisplay.pivotX = this._imgDisplay.width / 2;
-        this._imgDisplay.pivotY = this._imgDisplay.height / 2;
-        this._imgDisplay.x = this.width / 2;
-        this._imgDisplay.y = this.height / 2;
+        s._imgDisplay.width = s.width;
+        s._imgDisplay.height = s.height;
+        s._imgDisplay.pivotX = s._imgDisplay.width / 2;
+        s._imgDisplay.pivotY = s._imgDisplay.height / 2;
+        s._imgDisplay.x = s.width / 2;
+        s._imgDisplay.y = s.height / 2;
         //console.log("Button.draw 1111 this.width=" + this.width + ", this.height=" + this.height);
 
         //文字图片显示
-        if (this._textureLabel != null) {
-            if (this._imgLabel == null) {
-                this._imgLabel = new Laya.Image;
+        if (s._textureLabel != null) {
+            if (s._imgLabel == null) {
+                s._imgLabel = new Laya.Image;
                 //this._imgLabel.touchEnabled = false;
-                this.addChild(this._imgLabel);
+                s.addChild(s._imgLabel);
             }
-            this._imgLabel.texture = this._textureLabel;
+            s._imgLabel.texture = s._textureLabel;
 
-            if (!isNaN(this._labelMarginLeft)) {
-                this._imgLabel.x = this._labelMarginLeft;
+            if (!isNaN(s._labelMarginLeft)) {
+                s._imgLabel.x = s._labelMarginLeft;
             } else {
-                this._imgLabel.x = (this.width - this._imgLabel.width) / 2;
+                s._imgLabel.x = (s.width - s._imgLabel.width) / 2;
             }
-            if (!isNaN(this._labelMarginTop)) {
-                this._imgLabel.y = this._labelMarginTop;
+            if (!isNaN(s._labelMarginTop)) {
+                s._imgLabel.y = s._labelMarginTop;
             } else {
-                this._imgLabel.y = (this.height - this._imgLabel.height) / 2;
+                s._imgLabel.y = (s.height - s._imgLabel.height) / 2;
             }
         }
 
         //图标显示
-        if (this._textureIcon != null) {
-            if (this._imgIcon == null) {
-                this._imgIcon = new Laya.Image;
+        if (s._textureIcon != null) {
+            if (s._imgIcon == null) {
+                s._imgIcon = new Laya.Image;
                 //this._imgIcon.touchEnabled = false;
-                this.addChild(this._imgIcon);
+                s.addChild(s._imgIcon);
             }
-            this._imgIcon.texture = this._textureIcon;
+            s._imgIcon.texture = s._textureIcon;
 
-            if (!isNaN(this._iconMarginLeft)) {
-                this._imgIcon.x = this._iconMarginLeft;
+            if (!isNaN(s._iconMarginLeft)) {
+                s._imgIcon.x = s._iconMarginLeft;
             } else {
-                this._imgIcon.x = (this.width - this._imgIcon.width) / 2;
+                s._imgIcon.x = (s.width - s._imgIcon.width) / 2;
             }
-            if (!isNaN(this._iconMarginTop)) {
-                this._imgIcon.y = this._iconMarginTop;
+            if (!isNaN(s._iconMarginTop)) {
+                s._imgIcon.y = s._iconMarginTop;
             } else {
-                this._imgIcon.y = (this.height - this._imgIcon.height) / 2;
+                s._imgIcon.y = (s.height - s._imgIcon.height) / 2;
             }
         }
 
         //文字标签
-        if (this._label) {
-            if (!this._label.parent) this.addChild(this._label);
-            this._label.text = this._text;
-            this._label.fontSize = this._fontSize;
-            this._label.font = this._fontName;
-            this._label.bold = this._labelBold;
-            this._label.italic = this._labelItalic;
+        if (s._label) {
+            if (!s._label.parent) s.addChild(s._label);
+            s._label.text = s._text;
+            s._label.fontSize = s._fontSize;
+            s._label.font = s._fontName;
+            s._label.bold = s._labelBold;
+            s._label.italic = s._labelItalic;
             //this._label.lineSpacing = this._labelLineSpacing;
             //this._label.multiline = this._labelMultiline;
-            this._label.stroke = this._labelStroke;
+            s._label.stroke = s._labelStroke;
             //this._label.strokeColor = this._labelStrokeColor;
             //this._label.onInvalidate(null);//立即生效,这样下面的数据才准
 
-            if (!isNaN(this._labelMarginLeft)) {
-                this._label.x = this._labelMarginLeft;
+            if (!isNaN(s._labelMarginLeft)) {
+                s._label.x = s._labelMarginLeft;
             } else {
-                this._label.x = (this.width - this._label.width) / 2;
+                s._label.x = (s.width - s._label.width) / 2;
                 //console.log("Button.draw 222 this.width=" +this.width + ", this._label.width=" + this._label.width);
             }
-            if (!isNaN(this._labelMarginTop)) {
-                this._label.y = this._labelMarginTop;
+            if (!isNaN(s._labelMarginTop)) {
+                s._label.y = s._labelMarginTop;
             } else {
-                this._label.y = (this.height - this._label.height) / 2;
+                s._label.y = (s.height - s._label.height) / 2;
             }
         }
     }

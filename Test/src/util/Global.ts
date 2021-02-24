@@ -16,8 +16,10 @@ export default class Global {
             return prototype["__class__"];
         }
         var constructorString = prototype.constructor.toString().trim();
-        var index = constructorString.indexOf("(");
-        var className = constructorString.substring(9, index);
+        var index = constructorString.indexOf("{");
+        var className = constructorString.substring(0, index);
+        // var index = constructorString.indexOf("(");
+        // var className = constructorString.substring(9, index);
         Object.defineProperty(prototype, "__class__", {
             value: className,
             enumerable: false,
@@ -26,7 +28,7 @@ export default class Global {
         return className;
     }
 
-        /**
+    /**
      * 返回 name 参数指定的类的类对象引用。
      * @param name 类的名称。
      * @version Egret 2.4

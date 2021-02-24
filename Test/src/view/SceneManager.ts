@@ -2,7 +2,8 @@
 import GameConfig from "../GameConfig";
 import BaseScene from "./BaseScene";
 import ObjectPool from "../util/ObjectPool";
-export class SceneManager {
+
+export default class SceneManager {
     private static _instance: SceneManager;
     public _stage: Laya.Stage;
     public currentScene: BaseScene;
@@ -76,6 +77,16 @@ export class SceneManager {
             // s.gameLayer.graphics.drawRect(0, 0, s.gameLayer.width, s.gameLayer.height);
             // s.gameLayer.graphics.endFill();
         }
+
+        // console.log("GameConfig.width:" + GameConfig.width);
+        // console.log("GameConfig.height:" + GameConfig.height);
+        // console.log("stage.displayWidth:" + Laya.stage.displayWidth);
+        // console.log("stage.width:" + Laya.stage.width);
+        // console.log("stage.designWidth:" + Laya.stage.designWidth);
+        // console.log("Browser.clientWidth:" + Laya.Browser.clientWidth);
+        // console.log("gameScale:" + s.gameScale);
+        // console.log("gameLayer.x:" + s.gameLayer.x);
+        // console.log("gameLayer.y:" + s.gameLayer.y);
 
         //约束布局
         s.fixLayout();

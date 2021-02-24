@@ -1,7 +1,7 @@
 import GameConfig from "./GameConfig";
-import { MainScene } from "./MainScene";
+import MainScene from "./MainScene";
 import Global from "./util/Global";
-import { SceneManager } from "./view/SceneManager";
+import SceneManager from "./view/SceneManager";
 class Main {
 	constructor() {
 		//根据IDE设置初始化引擎		
@@ -40,57 +40,10 @@ class Main {
 		GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);
 	}
 
-	private sceneLayer: Laya.Sprite;
-	private gameScale: number = 1;
 	private showScene() {
-		let s = this;
-		// s.sceneLayer = new Laya.Sprite;
-		// s.sceneLayer.width = GameConfig.width;
-		// s.sceneLayer.height = GameConfig.height;
-		// Laya.stage.addChild(s.sceneLayer);
-		// Laya.stage.on(Laya.Event.RESIZE, s, s.stageResize);
-		// s.stageResize();
-
-		Laya.loader.load(["../laya/assets/img/bg.png", "../laya/assets/img/A.png", "../laya/assets/img/A点击.png"], Laya.Handler.create(this, () => {
-			// let bg = new Laya.Sprite;
-			// bg.texture = Laya.loader.getRes("../laya/assets/img/bg.png");
-			// s.sceneLayer.addChild(bg);
-
-			// var button:Laya.Button = new Laya.Button();//创建一个 Button 类的实例对象 button ,并传入它的皮肤。
-			// button.skin = "../laya/assets/img/A.png";
-			// button.stateNum = 1;
-			// button.x = 100;//设置 button 对象的属性 x 的值，用于控制 button 对象的显示位置。
-			// button.y = 100;//设置 button 对象的属性 y 的值，用于控制 button 对象的显示位置。
-			// button.clickHandler = Laya.Handler.create(this, this.onClickButton, [button], false);//设置 button 的点击事件处理器。
-			// s.sceneLayer.addChild(button);//将此 button 对象添加到显示列表。
-
+		Laya.loader.load(["../laya/assets/img/bg.png", "../laya/assets/img/A.png", "../laya/assets/img/A点击.png", "../laya/assets/skeleton/Sheep_Ani.sk"], Laya.Handler.create(this, () => {
 			SceneManager.instance.showScene(new MainScene);
 		}));
-	}
-
-	private onClickButton(e: any) {
-		console.log(e);
-	}
-
-	private stageResize() {
-		let s = this;
-		s.sceneLayer.width = GameConfig.width;
-		s.sceneLayer.height = GameConfig.height;
-		let scaleX = Laya.stage.width / GameConfig.width;
-		let scaleY = Laya.stage.height / GameConfig.height;
-		s.gameScale = scaleX < scaleY ? scaleX : scaleY;
-		s.sceneLayer.scaleX = s.sceneLayer.scaleY = s.gameScale;
-		s.sceneLayer.x = (Laya.stage.width - s.sceneLayer.width * s.gameScale) / 2;
-		s.sceneLayer.y = (Laya.stage.height - s.sceneLayer.height * s.gameScale) / 2;
-		console.log("GameConfig.width:" + GameConfig.width);
-		console.log("GameConfig.height:" + GameConfig.height);
-		console.log("stage.displayWidth:" + Laya.stage.displayWidth);
-		console.log("stage.width:" + Laya.stage.width);
-		console.log("stage.designWidth:" + Laya.stage.designWidth);
-		console.log("Browser.clientWidth:" + Laya.Browser.clientWidth);
-		console.log("gameScale:" + s.gameScale);
-		console.log("sceneLayer.x:" + s.sceneLayer.x);
-		console.log("sceneLayer.y:" + s.sceneLayer.y);
 	}
 }
 //激活启动类

@@ -17,9 +17,13 @@ export default class Skeleton extends Laya.Sprite {
     private _soundEndCallBack: Function;
     private _soundEndObject: any;
     private _curActionName: string;
+    private _loop:boolean = false;
     //private _timeScale: number = 1;
     private _archorX: number = 0;
     private _archorY: number = 0;
+
+    private loaded:boolean = false;
+    private loadExecute:boolean = false;
 
     // private _movieClip: Laya.MovieClip;
     // private _mcScale: number = 1;
@@ -48,11 +52,25 @@ export default class Skeleton extends Laya.Sprite {
     public setDataByName(bName: string, skPath: string): void {
         let s = this;
         //s.clear();
-        s._display.load(skPath + bName);
+        s._display.load(skPath + bName, Laya.Handler.create(s, s.loadFinish));
         s._display.x = -s._archorX;
         s._display.y = -s._archorY;
-        // s._display.on(dragonBones.EventObject.LOOP_COMPLETE, s.skEnd, s);
-        // s._display.addDBEventListener(dragonBones.EventObject.COMPLETE, s.completeEndCall, s);
+        s._display.on(Laya.Event.STOPPED, s, s.completeEndCall);
+        //s._display.on(Laya.Event.COMPLETE, s, s.completeEndCall);
+
+        // s._display.on(Laya.Event.LABEL, s, (event) => {
+        //     let tEventData: Laya.EventData = event as Laya.EventData;
+        //     console.log("动画事件 触发:", tEventData)
+        // });
+    
+    }
+
+    private loadFinish(e:Laya.Event) {
+        let s = this;
+        s.loaded = true;
+        if(s.loadExecute) {
+            s.play();
+        }
     }
 
     /**
@@ -200,6 +218,7 @@ export default class Skeleton extends Laya.Sprite {
             s.gotoAndPlay(s._endAct);
             s._endAct = null;
         }
+        //console.log("skEnd");
     }
 
     //添加动画最后一次循环结束时间监听
@@ -225,6 +244,7 @@ export default class Skeleton extends Laya.Sprite {
             s._completeEndObject = null;
             fun.call(funObj, this);
         }
+        //console.log("completeEndCall");
     }
 
     /**调整速度百分比
@@ -299,14 +319,24 @@ export default class Skeleton extends Laya.Sprite {
     public gotoAndPlay(actionName: string, loop: boolean = true, sound: string = null, endAct: string = null, soundEndCall: Function = null, soundThisObject: any = null): void {
         let s = this;
         s._curActionName = actionName;
+        s._loop = loop;
         s._sound = sound;
         s._endAct = endAct;
         s._soundEndCallBack = soundEndCall;
         s._soundEndObject = soundThisObject;
 
         //判断播放骨骼动画还是帧动画
+        if(s.loaded) {
+            s.play();
+        } else {
+            s.loadExecute = true;
+        }
+    }
+
+    private play() {
+        let s = this;
         if (s._display) {
-            s._display.play(actionName, loop);
+            s._display.play(s._curActionName, s._loop);
         }
         // else if (s._movieClip) {
         //     s._movieClip.gotoAndPlay(actionName, playTimes);
@@ -347,10 +377,7 @@ export default class Skeleton extends Laya.Sprite {
 
     public show(pr: any, toX: number = 0, toY: number = 0): void {
         let s = this;
-        if (pr.addElement != null)
-            pr.addElement(s);
-        else
-            pr.addChild(s);
+        pr.addChild(s);
         s.x = toX;
         s.y = toY;
     }

@@ -1,14 +1,29 @@
+import BaseUIComponent from "../ui/BaseUIComponent";
 import Global from "../util/Global";
-export default class BaseScene extends Laya.UIComponent {
+export default class BaseScene extends BaseUIComponent {
 	protected isClear: boolean = false;
 	protected modulePath: string;
 	protected skeletonPath: string;
 	protected soundPath: string;
 	protected videopath: string;
 	public _stage:Laya.Stage;
+	
 	public constructor() {
 		super();
-		//this.once(egret.Event.ADDED_TO_STAGE, this.init, this);
+	}
+
+	public onEnable() {
+		super.onEnable();
+		this.initData();
+		this.init();
+	}
+
+	public onDisable() {
+		super.onDisable();
+		this.hide();
+	}
+
+	public init() {
 	}
 
 	/**

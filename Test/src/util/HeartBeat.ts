@@ -33,7 +33,7 @@ export default class HeartBeat {
         if (HeartBeat._lastTime > 0 && HeartBeat._eplasedTime > 0) {
             //Debug.log = "正常帧时:" + HeartBeat._eplasedTime + ", 累积=" + HeartBeat._cumulativeTime;
             //当前帧频
-            var timeNum: number = Math.floor((Laya.Browser.now() - HeartBeat._lastTime) - HeartBeat._eplasedTime);
+            var timeNum: number = Math.floor((Date.now() - HeartBeat._lastTime) - HeartBeat._eplasedTime);
             //Debug.log = "正常帧时:" + HeartBeat._eplasedTime + ", 当前=" + timeNum;
             if (timeNum > 0) {//帧时间丢失,累积起来,达到整帧就补
                 HeartBeat._cumulativeTime += timeNum;
@@ -126,8 +126,8 @@ export default class HeartBeat {
             item.loopcount++;
             HeartBeat.executeFunCall(item);
         }
-        HeartBeat._lastTime = Laya.Browser.now();
-        Laya.stage.on(Laya.Event.FRAME, this, HeartBeat.onEnterFrame);
+        HeartBeat._lastTime = Date.now();
+        Laya.timer.frameLoop(1, this, HeartBeat.onEnterFrame, null, true);
         return true;
     }
 
@@ -187,7 +187,7 @@ export default class HeartBeat {
     public static dispose() {
         var i: number = 0;
         var item: BeatItem;
-        Laya.stage.off(Laya.Event.FRAME, this, HeartBeat.onEnterFrame);
+        Laya.timer.clear(this, this.onEnterFrame);
         for (i = 0; i < HeartBeat._listeners.length; i++) {
             item = HeartBeat._listeners[i];
             ObjectPool.recycleClass(item)

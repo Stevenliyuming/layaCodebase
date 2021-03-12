@@ -11,6 +11,11 @@ export default class ImageNumber extends Laya.Sprite {
 	/**水平和垂直对齐方式 */
 	public verticalAlign: string;
 	public horizontalAlign: string;
+	//改变图片字体之间的间隔大小
+	public deltaWidth: number = 0;
+	public deltaHeight: number = 0;
+	private startX: number;
+	private startY: number;
 
 	public constructor() {
 		super();
@@ -35,6 +40,8 @@ export default class ImageNumber extends Laya.Sprite {
 		if (s.parent != pr) {
 			pr.addChild(s);
 		}
+		s.startX = px;
+		s.startY = py;
 		s.x = px;
 		s.y = py;
 		s.numberValue = defaultText;
@@ -92,6 +99,7 @@ export default class ImageNumber extends Laya.Sprite {
 					} else if (s.horizontalAlign == "right") {
 						numberBitmap.x = 0 - (i + 1) * numberBitmap.width;
 					}
+					numberBitmap.x += i * s.deltaWidth;
 
 					if (s.verticalAlign == "top") {
 						numberBitmap.y = 0;
@@ -101,12 +109,15 @@ export default class ImageNumber extends Laya.Sprite {
 						numberBitmap.y = 0 - numberBitmap.height;
 					}
 					s.numberImages.push(numberBitmap);
-					spriteWidth += numberBitmap.width;
+					spriteWidth += (numberBitmap.width + s.deltaWidth);
 					spriteHeight = numberBitmap.height;
 				}
 			}
 			s.width = spriteWidth;
 			s.height = spriteHeight;
+			if (s.horizontalAlign == "center") {
+				s.x = s.startX + ((num - 1) * s.deltaWidth * -1) / 2;
+			}
 		}
 	}
 

@@ -744,7 +744,7 @@
             var item = null;
             var runNum = 1;
             if (HeartBeat._lastTime > 0 && HeartBeat._eplasedTime > 0) {
-                var timeNum = Math.floor((Laya.Browser.now() - HeartBeat._lastTime) - HeartBeat._eplasedTime);
+                var timeNum = Math.floor((Date.now() - HeartBeat._lastTime) - HeartBeat._eplasedTime);
                 if (timeNum > 0) {
                     HeartBeat._cumulativeTime += timeNum;
                     if (HeartBeat._cumulativeTime > HeartBeat._eplasedTime) {
@@ -806,8 +806,8 @@
                 item.loopcount++;
                 HeartBeat.executeFunCall(item);
             }
-            HeartBeat._lastTime = Laya.Browser.now();
-            Laya.stage.on(Laya.Event.FRAME, this, HeartBeat.onEnterFrame);
+            HeartBeat._lastTime = Date.now();
+            Laya.timer.frameLoop(1, this, HeartBeat.onEnterFrame, null, true);
             return true;
         }
         static removeListener(thisArg, respone) {
@@ -839,7 +839,7 @@
         static dispose() {
             var i = 0;
             var item;
-            Laya.stage.off(Laya.Event.FRAME, this, HeartBeat.onEnterFrame);
+            Laya.timer.clear(this, this.onEnterFrame);
             for (i = 0; i < HeartBeat._listeners.length; i++) {
                 item = HeartBeat._listeners[i];
                 ObjectPool.recycleClass(item);
@@ -2144,9 +2144,13 @@
             myButton.x = 500;
             myButton.y = s.group_play.height - myButton.height - 100;
             console.log(Global.getQualifiedClassName(myButton));
+            console.log(Global.getQualifiedClassName(myButton));
             console.log("---------------");
             console.log(Global.getQualifiedClassName(button));
-            console.log(Global.getDefinitionByName("Button"));
+            console.log(Global.getQualifiedClassName(Button));
+            console.log(Global.getQualifiedClassName(Laya.Button));
+            console.log(Button.prototype.constructor);
+            console.log(Laya.Button.prototype.constructor);
         }
         onClickButton(e) {
             console.log(e);

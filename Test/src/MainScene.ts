@@ -52,11 +52,13 @@ export default class MainScene extends BaseScene {
         myButton.x = 500;
         myButton.y = s.group_play.height - myButton.height - 100;
 
-        console.log(Global.getQualifiedClassName(myButton));
-        console.log("---------------");
-        console.log(Global.getQualifiedClassName(button));
+        // console.log(Global.getQualifiedClassName(myButton));
+        // console.log(Global.getQualifiedClassName(myButton));
+        // console.log("---------------");
+        // console.log(Global.getQualifiedClassName(button));
 
-        console.log(Global.getDefinitionByName("Button"));
+        // console.log(Global.getQualifiedClassName(Button));
+        // console.log(Global.getQualifiedClassName(Laya.Button));
     }
 
     private onClickButton(e: any) {

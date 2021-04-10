@@ -1,6 +1,6 @@
 export default class Global {
 
-    static FRAME_RATE: number = 60;
+    static FRAME_RATE: number = 30;
 
     static STATS_BTN: boolean = false;
 
@@ -26,6 +26,24 @@ export default class Global {
             writable: true
         });
         return className;
+    }
+
+    static is(obj:any, type:string) {
+        if(obj) {
+            var prototype = obj.prototype ? obj.prototype : Object.getPrototypeOf(obj);
+            var typeName:string;
+            while(prototype) {
+                typeName = prototype.constructor.name;
+                if(type.includes(typeName)) {
+                    return true;
+                }
+                obj = prototype["__proto__"];
+                if(!obj) return false;
+                prototype = obj.prototype ? obj.prototype : Object.getPrototypeOf(obj);
+            }
+            return false;
+        }
+        return false;
     }
 
     /**
@@ -55,5 +73,46 @@ export default class Global {
         }
         Global.getDefinitionByNameCache[name] = definition;
         return definition;
+    }
+
+    /**
+     *将16进制颜色分割成rgb值
+    */
+    public static spliceColor(color: number) {
+        let result = { r: -1, g: -1, b: -1 };
+        result.b = color % 256;
+        result.g = Math.floor((color / 256)) % 256;
+        result.r = Math.floor((color / 256) / 256);
+        return result;
+    }
+
+    /**
+     * 转换10进制rbg颜色转换到16进制
+     */
+    public static convertNumberToHex(r: number, g: number, b: number): number {
+        var strHex: string = "";
+        var r1 = r.toString(16);
+        if (r1.length == 1 || r1 === "0") r1 = "0" + r1;
+        var g1 = g.toString(16);
+        if (g1.length == 1 || g1 === "0") g1 = "0" + g1;
+        var b1 = b.toString(16);
+        if (b1.length == 1 || b1 === "0") b1 = "0" + b1;
+        strHex = "0x" + r1 + g1 + b1;
+        return parseInt(strHex);
+    }
+
+    /**
+     * 转换10进制rbg颜色转换到16进制
+     */
+    public static convertNumberToColor(r: number, g: number, b: number): string {
+        var strHex: string = "";
+        var r1 = r.toString(16);
+        if (r1.length == 1 || r1 === "0") r1 = "0" + r1;
+        var g1 = g.toString(16);
+        if (g1.length == 1 || g1 === "0") g1 = "0" + g1;
+        var b1 = b.toString(16);
+        if (b1.length == 1 || b1 === "0") b1 = "0" + b1;
+        strHex = "#" + r1 + g1 + b1;
+        return strHex;
     }
 }

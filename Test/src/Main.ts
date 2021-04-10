@@ -1,6 +1,8 @@
 import GameConfig from "./GameConfig";
+import { ResLoader } from "./loader/ResLoader";
 import MainScene from "./MainScene";
 import Global from "./util/Global";
+import HeartBeat from "./util/HeartBeat";
 import SceneManager from "./view/SceneManager";
 class Main {
 	constructor() {
@@ -41,9 +43,33 @@ class Main {
 	}
 
 	private showScene() {
-		Laya.loader.load(["../laya/assets/img/bg.png", "../laya/assets/img/A.png", "../laya/assets/img/A点击.png", "../laya/assets/skeleton/Sheep_Ani.sk"], Laya.Handler.create(this, () => {
-			SceneManager.instance.showScene(new MainScene);
+		let resCount = 0;
+		function onLoad() {
+			resCount += 1;
+			if(resCount == 2) {
+				HeartBeat.init();
+				SceneManager.instance.showScene(new MainScene);
+			}
+		}
+		Laya.loader.load([
+			"../laya/assets/img/bg.png",
+			"../laya/assets/img/A.png",
+			"../laya/assets/img/A点击.png",
+			"../laya/assets/img/slider_bar_v.png",
+			"../laya/assets/img/slider_bar_h.png",
+			"../laya/assets/img/hand.png",
+			"../laya/assets/img/playSound.png",
+		], Laya.Handler.create(this, () => {
+			onLoad();
 		}));
+
+		ResLoader.getInstance().resLoad("http://dev4iandcode.oss-cn-shenzhen.aliyuncs.com/s/platform/interactive/common/interactiveTemplate/mainScratch/moduleRelease/resource.pkg", null, (data: any) => {
+            console.log(data);
+			onLoad();
+            //codeBase.EgretProto.inject();
+
+            //this.createGameScene();
+        }, this, "get", "arraybuffer");
 	}
 }
 //激活启动类

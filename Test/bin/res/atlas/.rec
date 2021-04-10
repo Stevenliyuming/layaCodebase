@@ -42,6 +42,10 @@ D img
 P 64C879BA A.png
 P 464FC94A A点击.png
 R BB25464B bg.png
+P B24F78D9 hand.png
+P 65F3A93A playSound.png
+P 89E2154A slider_bar_h.png
+P 06CEA5BA slider_bar_v.png
 D skeleton
 R 0F8E11F0 Sheep_Ani.png
 R 1AB4BE35 Sheep_Ani.sk

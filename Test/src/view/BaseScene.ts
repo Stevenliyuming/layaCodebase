@@ -1,6 +1,6 @@
-import BaseUIComponent from "../ui/BaseUIComponent";
+import { BasicGroup } from './../basicUI/BasicGroup';
 import Global from "../util/Global";
-export default class BaseScene extends BaseUIComponent {
+export default class BaseScene extends BasicGroup {
 	protected isClear: boolean = false;
 	protected modulePath: string;
 	protected skeletonPath: string;

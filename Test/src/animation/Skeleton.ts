@@ -45,9 +45,6 @@ export default class Skeleton extends Laya.Sprite {
     /**
      * bName:龙骨文件和帧动画文件前缀名称，导出时要统一命名
      * skPath:放置龙骨动画文件的文件夹路径
-     * boneName:龙骨动画名称
-     * armatureName:龙骨动画骨架名称
-     * movieClipScale:帧动画缩放大小，有些帧动画导出时为了减小贴图大小，会缩放导出比例，显示的时候会比骨骼动画小，所以需要手动放大以达到骨骼动画的大小
      */
     public setDataByName(bName: string, skPath: string): void {
         let s = this;
